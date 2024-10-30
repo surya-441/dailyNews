@@ -11,7 +11,12 @@ const pool = new Pool({
   password: process.env.DB_PASS,
   port: 5432,
 });
-const phoneNumber = process.env.TEST_PHONE
+const getPhoneNumbers = async () => {
+  const query = "SELECT phone_number FROM customers";
+  const result = await pool.query(query);
+  const numbers = result.rows?.map((row) => row.phone_number);
+  return numbers;
+}
 const sendMessage = async (phoneNumber) => {
     try {
       const response = await axios.post('https://graph.facebook.com/v20.0/'+ phoneNumberID + '/messages', 
@@ -32,4 +37,9 @@ const sendMessage = async (phoneNumber) => {
       console.error(`Error sending message to ${phoneNumber}:`, error.response.data);
     }
 };
-sendMessage(phoneNumber)
+const messageAllCustomers = async () => {
+  const numbers = await getPhoneNumbers();
+  numbers.map((number) => sendMessage(number));
+}
+
+messageAllCustomers();
