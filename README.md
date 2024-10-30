@@ -1,0 +1,1 @@
+Building a bot that sends curated news messages to subscribed whatsapp users.
