@@ -1,8 +1,16 @@
 require('dotenv').config();
 const axios = require('axios');
+const { Pool } = require('pg');
 
 const token = process.env.API_TOKEN;
 const phoneNumberID = process.env.PHONE_ID;
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASS,
+  port: 5432,
+});
 const phoneNumber = process.env.TEST_PHONE
 const sendMessage = async (phoneNumber) => {
     try {
