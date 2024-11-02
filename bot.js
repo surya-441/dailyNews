@@ -24,7 +24,7 @@ const sendMessage = async (phoneNumber) => {
         messaging_product: 'whatsapp',
         to: phoneNumber,
         type: "template",
-        template: { name: "hello_world", language: {code: "en_US"}}
+        template: { name: "request_news", language: {code: "en_US"}}
       },
       {
         headers: {
