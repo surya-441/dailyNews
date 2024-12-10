@@ -42,11 +42,10 @@ async function set_true(phone_number, time) {
 	} catch(error) {
 		console.error('Error updating DB', error.stack);
 	}
-
 }
 app.post('/webhook', (req, res) => {
 	const body = req.body;
-	// console.log('Incoming Webhook: ' + JSON.stringify(body));
+	console.log('Incoming Webhook: ' + JSON.stringify(body));
 	const phone_number = body.entry[0].changes[0].value.contacts[0].wa_id
 	const messages = body.entry[0].changes[0].value.messages
 	for (const message of messages) {
@@ -58,11 +57,9 @@ app.post('/webhook', (req, res) => {
 			}
 		}
 	}
-	// console.log(body.entry[0].changes[0].value.messages)
 	res.sendStatus(200);
 });
 
-const PORT = process.env.PORT;
-app.listen(PORT, () => {
-	console.log(`Webhook is listening on port ${PORT}`);
+app.listen(process.env.HTTP_PORT, () => {
+	console.log(`Webhook is listening on port ${process.env.HTTP_PORT}`);
 });
