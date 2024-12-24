@@ -12,19 +12,19 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 const getPhoneNumbers = async () => {
-  const query = "SELECT phone_number FROM customers";
+  const query = `SELECT phone_number FROM CUSTOMERS where opt_in_preference = true AND NOW() - last_interaction < interval '1' day`;
   const result = await pool.query(query);
   const numbers = result.rows?.map((row) => row.phone_number);
   return numbers;
 }
-const sendMessage = async (phoneNumber) => {
+const sendImageToNumber = async (phoneNumber, image_id, caption) => {
     try {
       const response = await axios.post('https://graph.facebook.com/v20.0/'+ phoneNumberID + '/messages', 
       {
         messaging_product: 'whatsapp',
         to: phoneNumber,
-        type: "template",
-        template: { name: "request_news", language: {code: "en_US"}}
+        type: "image",
+        image: { id: image_id, caption: caption}
       },
       {
         headers: {
@@ -37,9 +37,15 @@ const sendMessage = async (phoneNumber) => {
       console.error(`Error sending message to ${phoneNumber}:`, error.response.data);
     }
 };
-const messageAllCustomers = async () => {
+const sendImage = async (image_id, caption) => {
   const numbers = await getPhoneNumbers();
-  numbers.map((number) => sendMessage(number));
+  numbers.map((number) => sendImageToNumber(number, image_id, caption));
 }
-
-messageAllCustomers();
+if(process.argv.length < 3) {
+  console.log("Please provide the image id")
+}
+else {
+  image_id = process.argv[2];
+  caption = process.argv.length === 4 ? process.argv[3] : "";
+  sendImage(image_id, caption)
+}

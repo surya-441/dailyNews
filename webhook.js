@@ -46,11 +46,13 @@ async function set_true(phone_number, time) {
 app.post('/webhook', (req, res) => {
 	const body = req.body;
 	console.log('Incoming Webhook: ' + JSON.stringify(body));
-	const phone_number = body.entry[0].changes[0].value.contacts[0].wa_id
-	const messages = body.entry[0].changes[0].value.messages
-	for (const message of messages) {
-		if(message.type === 'text') {
-			if(message.text.body === 'Yes') {
+	if(body.entry[0].changes[0].value.hasOwnProperty("contacts")) {
+		const phone_number = body.entry[0].changes[0].value.contacts[0].wa_id
+		const messages = body.entry[0].changes[0].value.messages
+		for (const message of messages) {
+			console.log(message.type)
+			if(message.type === 'button'){ //&& message.button.payload === "Yes") {
+				console.log(message.button)
 				const time = message.timestamp;
 				console.log('Recieved Yes from ' + phone_number + ' at ' + Date(time).toString())
 				set_true(phone_number, time)
